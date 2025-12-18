@@ -137,3 +137,37 @@ az acr build --registry <registry> --image <image-name>:<tag> .
    ```
 
 After deployment, requests routed through your Ingress IP (e.g. `http://20.247.229.54`) will serve the built React app. Ensure the backend API URL matches the AKS-accessible endpoint; the Vite proxy is only used during local development.
+
+## Google Analytics (GA4)
+
+The app integrates GA4 via `src/utils/analytics.ts`. Events only send when the app runs outside `localhost` and `VITE_GA_ID` is configured.
+
+### Access the Property
+
+1. Go to [https://analytics.google.com](https://analytics.google.com) and sign in with the Firebase project account.
+2. Select the GA4 property whose Measurement ID matches `VITE_GA_ID`.
+3. Use “Admin → Data Streams” if you need to confirm the Measurement ID or stream settings.
+
+### Validate in Realtime
+
+- Navigate to **Reports → Realtime**.
+- Trigger events from the deployed site (e.g. the pricing CTAs on `/analytics-test`).
+- Look for event names such as `page_view` and custom events (e.g. `Pricing CTA` category) in the realtime dashboard.
+
+### Explore Logged Events
+
+1. Open **Reports → Engagement → Events** to view aggregated counts of events sent by the app.
+2. Click an event to see parameters such as `event_category`, `event_action`, and `event_label` recorded by `logEvent`.
+3. Use **Reports → Engagement → Pages and screens** for page-view metrics emitted by `logPageView`.
+
+### Build Explorations (Optional)
+
+- In **Explore**, create a “Free form” exploration.
+- Add dimensions like `eventName` and metrics like `Event count` to analyze specific CTAs or flows.
+- Apply filters for `eventCategory = Pricing CTA` or other labels you pass to `logEvent`.
+
+### Troubleshooting Tips
+
+- Confirm `VITE_GA_ID` is present in the deployed environment (`view-source` should show the GA4 script with the Measurement ID when analytics initialize).
+- If events aren’t appearing, ensure the site isn’t running on `localhost` (events are skipped in development) and that ad blockers aren’t blocking GA requests.
+- Use the GA DebugView (Enable Chrome’s `ga_debug=1` query param) for step-by-step verification while testing.

@@ -16,7 +16,7 @@ spec:
         - name: acr-secret
       containers:
         - name: frontend
-          image: testapi.azurecr.io/test-frontend:v3
+          image: testapi.azurecr.io/test-frontend:v4
           imagePullPolicy: Always
           ports:
             - containerPort: 80 # Nginx mặc định chạy cổng 80

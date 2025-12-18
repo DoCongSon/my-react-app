@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { logEvent, setUserId } from '../utils/analytics'
 
 const LoginPage = () => {
   const { user, loading, loginWithGoogle } = useAuth()
@@ -20,9 +21,14 @@ const LoginPage = () => {
 
     try {
       await loginWithGoogle()
+      // 1. Đặt ID cho người dùng (Lấy UID từ Firebase)
+      setUserId(user?.uid || 'unknown')
+      // 2. Ghi nhận sự kiện Login thành công
+      logEvent('Authentication', 'Login Success', 'Google Method')
       navigate('/', { replace: true })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
+      logEvent('Authentication', 'Login Failed', err instanceof Error ? err.message : 'Unknown error')
     } finally {
       setSubmitting(false)
     }
